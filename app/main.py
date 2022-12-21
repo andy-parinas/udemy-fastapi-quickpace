@@ -1,6 +1,7 @@
 from typing import Optional
 from fastapi import FastAPI, APIRouter, status
 
+from .schema import RecipeCreate, Recipe, RecipeSearchResults
 
 RECIPES = [
     {
@@ -41,7 +42,7 @@ def fetch_recipe(*, recipe_id: int):
         return result[0]
 
 
-@api_router.get('/search', status_code=status.HTTP_200_OK)
+@api_router.get('/search', status_code=status.HTTP_200_OK, response_model=RecipeSearchResults)
 def search_recipes(keyword: Optional[str] = None, max_results: Optional[int] = 10):
     """
     Search for Recipes based on Keyword
@@ -51,6 +52,25 @@ def search_recipes(keyword: Optional[str] = None, max_results: Optional[int] = 1
 
     results = filter(lambda recipe: keyword.lower() in recipe['label'].lower(), RECIPES)
     return {'results': list(results)[:max_results]}
+
+
+
+@api_router.post('/recipe/', status_code=status.HTTP_201_CREATED, response_model=Recipe)
+def create_recipe(*, recipe_in: RecipeCreate):
+    """
+    Create new Recipe
+    """
+    new_id = len(RECIPES) + 1
+    new_recipe = Recipe(
+        id=new_id,
+        label=recipe_in.label,
+        source=recipe_in.source,
+        url=recipe_in.url
+    )
+
+    RECIPES.append(new_recipe.dict())
+
+    return new_recipe
 
 app.include_router(api_router)
 
