@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import FastAPI, APIRouter, status
+from fastapi import FastAPI, APIRouter, HTTPException, status
 
 from .schema import RecipeCreate, Recipe, RecipeSearchResults
 
@@ -38,8 +38,12 @@ def fetch_recipe(*, recipe_id: int):
     Fecth as single recipe by ID
     """
     result = [recipe for recipe in RECIPES if recipe['id'] == recipe_id]
-    if result:
-        return result[0]
+
+    if not result:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Recipe with id: {recipe_id} not found")
+
+
+    return result[0]
 
 
 @api_router.get('/search', status_code=status.HTTP_200_OK, response_model=RecipeSearchResults)
