@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import FastAPI, APIRouter, status
 
 
@@ -39,6 +40,17 @@ def fetch_recipe(*, recipe_id: int):
     if result:
         return result[0]
 
+
+@api_router.get('/search', status_code=status.HTTP_200_OK)
+def search_recipes(keyword: Optional[str] = None, max_results: Optional[int] = 10):
+    """
+    Search for Recipes based on Keyword
+    """
+    if not keyword:
+        return {'results': RECIPES[:max_results]}
+
+    results = filter(lambda recipe: keyword.lower() in recipe['label'].lower(), RECIPES)
+    return {'results': list(results)[:max_results]}
 
 app.include_router(api_router)
 
