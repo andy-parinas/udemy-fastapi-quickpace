@@ -1,7 +1,7 @@
 from typing import Optional
 from fastapi import FastAPI, APIRouter, HTTPException, status
 
-from .schema import RecipeCreate, Recipe, RecipeSearchResults
+from .schemas import RecipeCreate, Recipe, RecipeSearchResults
 
 RECIPES = [
     {

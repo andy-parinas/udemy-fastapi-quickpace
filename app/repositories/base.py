@@ -1,4 +1,4 @@
-from typing import  Any, Dict, Generic, TypeVar, Union, Type, Optional, List
+from typing import Any, Dict, Generic, TypeVar, Union, Type, Optional, List
 
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
@@ -16,7 +16,7 @@ class RepositoryBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         CRUD object with default methods to Create, Read, Update, Delete (CRUD).
         **Parameters**
         * `model`: A SQLAlchemy model class
-        * `schema`: A Pydantic model (schema) class
+        * `schemas`: A Pydantic model (schemas) class
         """
         self.model = model
 
@@ -26,7 +26,7 @@ class RepositoryBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     def getMany(self, db:Session, *, skip:int = 0, limit:int = 0) -> List[ModelType]:
         return db.query(self.model).offset(skip).limit(limit).all()
 
-    def create(self, db: Session, *, data: CreateSchemaType)->ModelType:
+    def create(self, db: Session, *, data: CreateSchemaType) -> ModelType:
         data_in = jsonable_encoder(data)
         db_obj = self.model(**data_in)
         db.add(db_obj)
@@ -34,7 +34,7 @@ class RepositoryBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db.refresh(db_obj)
         return db_obj
 
-    def update(self, db: Session, *, db_obj: ModelType, obj_in: Union[UpdateSchemaType, Dict[str, Any]]):
+    def update(self, db: Session, *, db_obj: ModelType, obj_in: Union[UpdateSchemaType, Dict[str, Any]]) -> ModelType:
         obj_data = jsonable_encoder(db_obj)
         if isinstance(obj_in, dict):
             update_data = obj_in
