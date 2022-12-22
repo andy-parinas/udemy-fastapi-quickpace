@@ -26,8 +26,8 @@ class RepositoryBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     def getMany(self, db:Session, *, skip:int = 0, limit:int = 0) -> List[ModelType]:
         return db.query(self.model).offset(skip).limit(limit).all()
 
-    def create(self, db: Session, *, data: CreateSchemaType) -> ModelType:
-        data_in = jsonable_encoder(data)
+    def create(self, db: Session, *, obj_in: CreateSchemaType) -> ModelType:
+        data_in = jsonable_encoder(obj_in)
         db_obj = self.model(**data_in)
         db.add(db_obj)
         db.commit()

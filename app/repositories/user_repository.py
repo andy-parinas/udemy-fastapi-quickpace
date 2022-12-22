@@ -6,7 +6,7 @@ from app.schemas.user import  UserCreate, UserUpdate
 from sqlalchemy.orm import Session
 
 class UserRepository(RepositoryBase[User, UserCreate, UserUpdate]):
-    def find_by_email(self, db: Session, *, email: str) -> Optional[User]:
+    def get_by_email(self, db: Session, *, email: str) -> Optional[User]:
         return db.query(User).filter(User.email == email).first()
 
 
