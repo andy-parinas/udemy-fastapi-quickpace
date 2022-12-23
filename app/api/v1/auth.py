@@ -3,9 +3,12 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from app import schemas
+from app.models.user import User
 from app import repositories as repo
 from app.db.session import get_db
 from app.services import auth
+
+
 router = APIRouter()
 
 @router.post('signup', response_model=schemas.User, status_code=status.HTTP_201_CREATED)
@@ -35,3 +38,8 @@ def login( db: Session = Depends(get_db),  form_data: OAuth2PasswordRequestForm 
         "access_token": auth.create_access_token(sub=user.id),
         "token_type": "bearer"
     }
+
+@router.get('/me', response_model=schemas.User)
+def read_user_profile(current_user: User = Depends(auth.get_current_user)):
+    user = current_user
+    return user
