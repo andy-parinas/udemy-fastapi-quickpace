@@ -25,8 +25,9 @@ def init_db(db: Session) -> None:
         user = repo.user.get_by_email(db, email=FIRST_SUPERUSER)
         if not user:
             user_in = UserCreate(
-                full_name="Initial Super User",
+                first_name="Super User",
                 email=FIRST_SUPERUSER,
+                password='password',
                 is_superuser=True,
             )
             user = repo.user.create(db, obj_in=user_in)  # noqa: F841
